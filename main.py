@@ -212,5 +212,3 @@ if selected == "Referensi":
     st.subheader("""""")
     st.write("""Sumber data di dapatkan melalui github, Berikut merupakan link untuk mengakses sumber dataset dari github.
     <a href="https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv">github dataset dataset</a>""", unsafe_allow_html=True) 
-
-  
