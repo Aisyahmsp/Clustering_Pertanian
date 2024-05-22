@@ -148,7 +148,7 @@ if selected == "Description":
 
 if selected == "Dataset":
     st.markdown("""<h2 style='text-align: center; color:grey;'> Dataset Breast Cancer Prediction </h1> """, unsafe_allow_html=True)
-    df = pd.read_csv('https://raw.githubusercontent.com/aisyaturradiah/project/main/Breast_cancer_data.csv')
+    df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
     c1, c2, c3 = st.columns([1,5,1])
 
     with c1:
@@ -179,11 +179,11 @@ if selected == "Preprocessing":
 
 
 if selected == "Clustering":
-    df = pd.read_csv('https://raw.githubusercontent.com/aisyaturradiah/project/main/Breast_cancer_data.csv')
+    df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
 
 
 if selected == "Evaluation":
-    df = pd.read_csv('https://raw.githubusercontent.com/aisyaturradiah/project/main/Breast_cancer_data.csv')
+    df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
    
 if selected == "Referensi":
     col1, col2, col3 = st.columns([1,2,1])
@@ -211,6 +211,6 @@ if selected == "Referensi":
    
     st.subheader("""""")
     st.write("""Sumber data di dapatkan melalui github, Berikut merupakan link untuk mengakses sumber dataset dari github.
-    <a href="https://raw.githubusercontent.com/aisyaturradiah/project/main/Breast_cancer_data.csv">github dataset dataset</a>""", unsafe_allow_html=True) 
+    <a href="https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv">github dataset dataset</a>""", unsafe_allow_html=True) 
 
   
