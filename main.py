@@ -208,6 +208,4 @@ if selected == "Referensi":
     st.subheader("""Sumber Dataset""")
     st.write("""
     Sumber data di dapatkan dari Dinas Ketahanan Pangan dan Pertanian Kabupaten Sumenep Tahun 2020.
-   
-    st.subheader("""""")
-    st.write("""Sumber data di dapatkan melalui github, Berikut merupakan link untuk mengakses sumber dataset dari github.""")
+   """)
