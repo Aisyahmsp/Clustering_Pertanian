@@ -6,6 +6,9 @@ import altair as alt
 from PIL import Image
 from sklearn.preprocessing import MinMaxScaler
 
+# display
+st.set_page_config(page_title="Clustering", page_icon='logo.jpeg')
+
 st.markdown("""<h1 style='text-align: center;'> Pengelompokan Produktivitas Pertanian </h1> """, unsafe_allow_html=True)
 # 1. as sidevar menu
 with st.sidebar:
