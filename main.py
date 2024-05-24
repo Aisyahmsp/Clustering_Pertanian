@@ -122,7 +122,7 @@ if selected == "Deskripsi":
 
 if selected == "Dataset":
     st.markdown("""<h2 style='text-align: center; color:grey;'> Dataset Produktivitas Pertanian Kabupaten Sumenep Tahun 2020 </h1> """, unsafe_allow_html=True)
-    df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
+    data = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
     c1, c2, c3 = st.columns([1,5,1])
 
     with c1:
@@ -137,20 +137,62 @@ if selected == "Dataset":
 if selected == "Preprocessing":
     st.subheader("""Normalisasi Data""")
     st.write("""Rumus Normalisasi Data :""")
-    st.image('https://i.stack.imgur.com/EuitP.png', use_column_width=False, width=250)
+    rumus = Image.open('rumus_norm.jpg')
+    st.image(rumus, use_column_width=False, width=250)
     st.markdown("""
     Dimana :
     - X = data yang akan dinormalisasi atau data asli
     - min = nilai minimum semua data asli
     - max = nilai maksimum semua data asli
     """)
+    
     st.subheader('Hasil Normalisasi Data')
-    st.write(scaled_features)
+    # MENGHAPUS FITUR YANG TIDAK RELEVAN
+    # Tentukan daftar fitur yang ingin dihapus
+    delete_fitur = ['No', 'Tanggal', 'Kecamatan', 'Desa']
+    # Gunakan metode drop untuk menghapus fitur dari DataFrame
+    data_clean = data.drop(delete_fitur, axis=1)
+    # Tampilkan DataFrame setelah fitur dihapus
+    data = data_clean
+    # Tentukan fitur yang ingin dihapus sementara
+    fitur_poktan = data['Kelompok Tani']
+    # Hapus fitur desa dari DataFrame
+    data.drop('Kelompok Tani', axis=1, inplace=True)
 
-    st.subheader('Target Label')
+    # TRANSFORMASI DATA
+    # Fitur-fitur yang ingin diperiksa
+    fitur_list = ['Komoditas', 'Varietas', 'Jenis OPT']
+    
+    # Mendapatkan daftar nilai unik yang sudah diurutkan dan mengganti nilai dalam kolom dengan angka sesuai urutan nilai unik
+    for fitur in fitur_list:
+        unique_values = sorted(data[fitur].unique())
+        data[f'{fitur}_Kode'] = data[fitur].map({value: i + 1 for i, value in enumerate(unique_values)})
+    
+    # Menampilkan DataFrame dengan kolom baru untuk setiap fitur
+    fitur_kode_columns = [f'{fitur}_Kode' for fitur in fitur_list]
+    # Drop fitur 'Komoditas', 'Varietas', dan 'Jenis Opt'
+    data.drop(['Komoditas', 'Varietas', 'Jenis OPT'], axis=1, inplace=True)
+    # Rename fitur menjadi 'Komoditas_Kode', 'Varietas_Kode', dan 'Jenis_Opt_Kode'
+    data.rename(columns={'Komoditas_Kode': 'Komoditas', 'Varietas_Kode': 'Varietas', 'Jenis OPT_Kode': 'Jenis_OPT'}, inplace=True)
 
-    st.write(labels)
+    # MISSING VALUE
+    data['Luas Terserang (Ha)'] = pd.to_numeric(data['Luas Terserang (Ha)'], errors='coerce')
+    data['Intensitas (%)'] = pd.to_numeric(data['Intensitas (%)'], errors='coerce')
+    # Menampilkan nilai mean dari masing-masing fitur
+    mean_values = data.mean()
+    # Mengganti nilai null dengan nilai mean
+    data = data.fillna(mean_values)
 
+    # NORMALISASI DATA
+    # Fitur-fitur yang ingin dinormalisasi
+    fitur_list = ['Luas Tanam (ha)', 'Stadia/Umur Tanaman (hst)', 'Pupuk Bersubsidi Organik dan Anorganik (Ton)',
+                  'Luas Terserang (Ha)', 'Intensitas (%)','Luas Waspada (Ha)','Hasil Panen (ton)']
+    # Membuat objek MinMaxScaler
+    scaler = MinMaxScaler()
+    # Melakukan normalisasi Min-Max Scalar hanya pada fitur yang dipilih
+    data[fitur_list] = scaler.fit_transform(data[fitur_list])
+    # Menampilkan dataframe setelah normalisasi
+    data
 
 if selected == "Clustering":
     df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
