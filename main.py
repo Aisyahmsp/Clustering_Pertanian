@@ -5,6 +5,7 @@ import numpy as np
 import altair as alt
 from PIL import Image
 from sklearn.preprocessing import MinMaxScaler
+from scipy.stats import mode
 
 # display
 st.set_page_config(page_title="Clustering", page_icon='logo.jpeg')
@@ -244,26 +245,142 @@ if selected == "Clustering K-Means":
     scaler = MinMaxScaler()
     # Melakukan normalisasi Min-Max Scalar hanya pada fitur yang dipilih
     data[fitur_list] = scaler.fit_transform(data[fitur_list])
-    # Menampilkan dataframe setelah normalisasi
-    data
 
     Hasil_Clustering, Rincian_Cluster, Nilai_DBI, Nilai_Silhouette = st.tabs(["Hasil Clustering", "Rincian Cluster", "Nilai DBI", "Nilai Silhouette"])
-
-    
     
     with Hasil_Clustering:
         # Memasukkan jumlah cluster menggunakan Streamlit
         num_clusters = st.number_input("Masukkan jumlah cluster:", min_value=1, max_value=len(data), step=1, value=3)
-        
+        st.subheader("""Hasil Clustering""")
         # Mendapatkan nilai centroid awal dari n baris pertama data secara acak
-        if num_clusters > 0:
-            centroids = data.sample(n=num_clusters, random_state=42)
-            st.write("Centroid awal:")
-            st.write(centroids)
-        else:
-            st.error("Jumlah cluster harus lebih besar dari 0.")
+        centroids = data.sample(n=num_clusters, random_state=42)
+        centroid = centroids.values
+        data_asli = data.values
+        # Mendefinisikan fungsi untuk menghitung jarak antara data dan centroid
+        def hitung_jarak(data, centroid):
+            jarak = []
+            for i in range(len(data)):
+                jarak_centroid = []
+                for j in range(len(centroid)):
+                    total_euclidean = 0
+                    total_hamming = 0
+                    for k in range(len(data[i])):
+                        if k in range(7,10):
+                          # Kolom 8, 9, 10 menggunakan Hamming Distance
+                            if data[i][k] != centroid[j][k]:
+                                total_hamming += 1
+                            else:
+                              total_hamming = 0
+                        else:  # Kolom 1-7 menggunakan Euclidean Distance
+                            total_euclidean += (data[i][k] - centroid[j][k])**2
+                    total_euclidean = np.sqrt(total_euclidean)  # Akar dari total Euclidean Distance
+                    total_jarak = total_euclidean + total_hamming  # Total jarak = Euclidean + Hamming
+                    jarak_centroid.append(total_jarak)
+                jarak.append(jarak_centroid)
+            return np.array(jarak)
+        
+        # Menghitung jarak antara data asli dan centroid
+        jarak_data_centroid = hitung_jarak(data_asli, centroid)
+        # Memilih jarak terkecil untuk setiap baris
+        jarak_terkecil = np.argmin(jarak_data_centroid, axis=1)
+        # Menampilkan label berdasarkan jarak terkecil
+        label = jarak_terkecil + 1
+        # Fungsi untuk mengupdate centroid berdasarkan label
+        def update_centroid(data_asli, label, num_clusters, centroids):
+            # Mengelompokkan data berdasarkan label cluster
+            data_cluster = {}
+            for i in range(1, num_clusters + 1):
+                data_cluster[i] = data_asli[label == i]
+        
+            # Memperbarui centroid
+            new_centroids = []
+        
+            # Loop untuk setiap cluster
+            for i in range(1, num_clusters + 1):
+                cluster_data = data_cluster[i]
+                centroid_row = []
+        
+                # Jika klaster kosong, gunakan centroid sebelumnya
+                if len(cluster_data) == 0:
+                   centroid_row = centroid[i-1]  # Gunakan centroid sebelumnya
+                else:
+                    # Hitung nilai rata-rata untuk kolom 1 sampai 7
+                    for j in range(7):
+                        mean_value = np.mean(cluster_data[:, j])
+                        centroid_row.append(mean_value)
+        
+                    # Hitung nilai yang paling sering muncul untuk kolom 8, 9, dan 10
+                    for j in range(7, 10):
+                        mode_values = mode(cluster_data[:, j])[0]  # Mengambil nilai yang paling sering muncul
+                        if isinstance(mode_values, np.ndarray):  # Memeriksa apakah ada lebih dari satu mode
+                            mode_value = mode_values[0]  # Mengambil nilai pertama dari hasil mode
+                        else:
+                            mode_value = mode_values  # Jika hanya ada satu mode, gunakan nilai tersebut
+                        centroid_row.append(mode_value)
+        
+                # Tambahkan baris centroid ke daftar centroid baru
+                new_centroids.append(centroid_row)
+        
+            return np.array(new_centroids)
+            # Inisialisasi variabel
+            max_iter = 100
+            iter_count = 0
+            prev_label = None
+            
+            # List untuk menyimpan hasil iterasi
+            hasil_iterasi = []
+            
+            # Iterasi K-Means
+            while True:
+                # Increment iterasi
+                iter_count += 1
+            
+                # Update centroid
+                new_centroids = update_centroid(data_asli, label, num_clusters,centroids)
+            
+                # Hitung jarak antara data dan centroid baru
+                jarak_data_centroid_baru = hitung_jarak(data_asli, new_centroids)
+            
+                # Memilih jarak terkecil untuk setiap baris
+                jarak_terkecil_baru = np.argmin(jarak_data_centroid_baru, axis=1)
+            
+                # Mengecek konvergensi dengan membandingkan hasil label dengan iterasi sebelumnya
+                if prev_label is not None and np.array_equal(jarak_terkecil_baru +1, prev_label):
+                    st.write(f"Konvergensi dicapai setelah iterasi ke-{iter_count}.")
+                    hasil_iterasi.append((iter_count, label, new_centroids))
+                    break
+            
+                # Update label
+                label = jarak_terkecil_baru +1
+            
+                # Simpan label untuk iterasi berikutnya
+                prev_label = np.copy(label)
+            
+                # Menyimpan hasil iterasi
+                hasil_iterasi.append((iter_count, label, new_centroids))
+            
+                # Memeriksa apakah sudah mencapai maksimum iterasi
+                if iter_count >= max_iter:
+                    break
+                # Menggabungkan data asli dengan label clustering terakhir
+                data_with_group = data.copy()
+                data_with_group['Cluster'] = label
+                data_with_group.insert(0, 'Kelompok Tani', fitur_poktan)
+                
+                # Menampilkan hasil clustering terakhir dengan nama kelompok tani
+                st.write("Hasil Clustering Terakhir dengan Nama Kelompok Tani dan labelnya:")
+                data_with_group
+
     with Rincian_Cluster:
-        st.write("")
+        st.subheader("Rincian Hasil Cluster")
+        # Mengelompokkan data berdasarkan cluster dan menampilkan kelompok tani di setiap clusternya
+        for cluster in sorted(data_with_group['Cluster'].unique()):
+            kelompok_tani = data_with_group[data_with_group['Cluster'] == cluster]['Kelompok Tani'].tolist()
+            jumlah_kelompok = len(kelompok_tani)
+            st.subheader(f"\nCluster {cluster} terdiri dari {jumlah_kelompok} kelompok tani berikut:")
+            for kelompok in kelompok_tani:
+                st.write(f"- {kelompok}")
+        
 
     with Nilai_DBI:
         st.write("")
