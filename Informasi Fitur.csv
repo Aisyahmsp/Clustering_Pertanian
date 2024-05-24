@@ -1,0 +1,11 @@
+No,Nama Fitur,Satuan,Tipe Data,Keterangan
+1,Komoditas,-,Kategorikal,Jenis tanaman yang ditanam
+2,Luas Tanam,Hektar,Numerik,Ukuran luas area tempat tanam
+3,Varietas,-,Kategorikal,Jenis varietas tanaman yang digunakan
+4,Stadia/Umur Tanaman,Hari,Numerik,Jumlah hari tanaman telah ditanam
+5,Jenis OPT,-,Kategorikal,Jenis organisme pengganggu tanaman
+6,Pupuk Bersubsisdi Organik dan Anorganik,Ton,Numerik,Jumlah pupuk organik dan anorganik yang digunakan
+7,Luas Terserang,Hektar,Numerik,Ukuran luas area tanaman yanag terserang hama atau penyakit
+8,Intensitas,Persen,Numerik,Presentase intensitas serangan OPT
+9,Luas Waspada,Hektar,Numerik,Ukuran luas area yang perlu diwaspadai terhadap serangan OPT
+10,Hasil Panen,Ton,Numerik,Jumlah hasil panen yang diperoleh
