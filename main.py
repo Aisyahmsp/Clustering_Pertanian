@@ -5,9 +5,6 @@ import numpy as np
 import altair as alt
 from PIL import Image
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from sklearn.naive_bayes import GaussianNB
 
 st.markdown("""<h1 style='text-align: center;'> Pengelompokan Produktivitas Pertanian </h1> """, unsafe_allow_html=True)
 # 1. as sidevar menu
