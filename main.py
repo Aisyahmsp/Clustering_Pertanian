@@ -199,10 +199,75 @@ if selected == "Preprocessing":
     data
 
 if selected == "Clustering K-Means":
-    df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
-    st.subheader('Nilai DBI')
-    st.subheader('Nilai Sillhouette')
-    st.subheader('Hasil Clustering')
+    data = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
+    # MENGHAPUS FITUR YANG TIDAK RELEVAN
+    # Tentukan daftar fitur yang ingin dihapus
+    delete_fitur = ['No', 'Tanggal', 'Kecamatan', 'Desa']
+    # Gunakan metode drop untuk menghapus fitur dari DataFrame
+    data_clean = data.drop(delete_fitur, axis=1)
+    # Tampilkan DataFrame setelah fitur dihapus
+    data = data_clean
+    # Tentukan fitur yang ingin dihapus sementara
+    fitur_poktan = data['Kelompok Tani']
+    # Hapus fitur desa dari DataFrame
+    data.drop('Kelompok Tani', axis=1, inplace=True)
+
+    # TRANSFORMASI DATA
+    # Fitur-fitur yang ingin diperiksa
+    fitur_list = ['Komoditas', 'Varietas', 'Jenis OPT']
+    
+    # Mendapatkan daftar nilai unik yang sudah diurutkan dan mengganti nilai dalam kolom dengan angka sesuai urutan nilai unik
+    for fitur in fitur_list:
+        unique_values = sorted(data[fitur].unique())
+        data[f'{fitur}_Kode'] = data[fitur].map({value: i + 1 for i, value in enumerate(unique_values)})
+    
+    # Menampilkan DataFrame dengan kolom baru untuk setiap fitur
+    fitur_kode_columns = [f'{fitur}_Kode' for fitur in fitur_list]
+    # Drop fitur 'Komoditas', 'Varietas', dan 'Jenis Opt'
+    data.drop(['Komoditas', 'Varietas', 'Jenis OPT'], axis=1, inplace=True)
+    # Rename fitur menjadi 'Komoditas_Kode', 'Varietas_Kode', dan 'Jenis_Opt_Kode'
+    data.rename(columns={'Komoditas_Kode': 'Komoditas', 'Varietas_Kode': 'Varietas', 'Jenis OPT_Kode': 'Jenis_OPT'}, inplace=True)
+
+    # MISSING VALUE
+    data['Luas Terserang (Ha)'] = pd.to_numeric(data['Luas Terserang (Ha)'], errors='coerce')
+    data['Intensitas (%)'] = pd.to_numeric(data['Intensitas (%)'], errors='coerce')
+    # Menampilkan nilai mean dari masing-masing fitur
+    mean_values = data.mean()
+    # Mengganti nilai null dengan nilai mean
+    data = data.fillna(mean_values)
+
+    # NORMALISASI DATA
+    # Fitur-fitur yang ingin dinormalisasi
+    fitur_list = ['Luas Tanam (ha)', 'Stadia/Umur Tanaman (hst)', 'Pupuk Bersubsidi Organik dan Anorganik (Ton)',
+                  'Luas Terserang (Ha)', 'Intensitas (%)','Luas Waspada (Ha)','Hasil Panen (ton)']
+    # Membuat objek MinMaxScaler
+    scaler = MinMaxScaler()
+    # Melakukan normalisasi Min-Max Scalar hanya pada fitur yang dipilih
+    data[fitur_list] = scaler.fit_transform(data[fitur_list])
+    # Menampilkan dataframe setelah normalisasi
+    data
+
+    Hasil_Clustering, Rincian_Cluster, Nilai_DBI, Nilai_Silhouette = st.tabs(["Hasil Clustering", "Rincian Cluster", "Nilai DBI", "Nilai Silhouette"])
+
+    
+    
+    with Hasil_Clustering:
+        # Memasukkan jumlah cluster menggunakan Streamlit
+        num_clusters = st.number_input("Masukkan jumlah cluster:", min_value=1, max_value=len(data), step=1, value=3)
+        
+        # Mendapatkan nilai centroid awal dari n baris pertama data secara acak
+        if num_clusters > 0:
+            centroids = data.sample(n=num_clusters, random_state=42)
+            st.write("Centroid awal:")
+            st.write(centroids)
+        else:
+            st.error("Jumlah cluster harus lebih besar dari 0.")
+    with Rincian_Cluster:
+
+    with Nilai_DBI:
+
+    with Nilai_Silhouette:
+    
 
 
 if selected == "Clustering BSDK":
