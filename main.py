@@ -111,11 +111,12 @@ if selected == "Deskripsi":
     
     st.subheader("""Sumber Data""")
     st.write(""" Data yang digunakan merupakan data produktivitas pertanian yang diperoleh dari 
-    Dinas Ketahanan Pangan dan Pertanian Kabupaten Sumenep Tahun 2020. Data dapat diakses melalui laman <a href="https://www.kaggle.com/datasets/merishnasuwal/breast-cancer-prediction-dataset"> dataset produktivitas pertanian</a>""")
+    Dinas Ketahanan Pangan dan Pertanian Kabupaten Sumenep Tahun 2020. Data dapat diakses melalui laman""")
+    <a href="https://www.kaggle.com/datasets/merishnasuwal/breast-cancer-prediction-dataset"> dataset produktivitas pertanian</a>
     
     st.subheader(""" Informasi Detail Fitur""")
     fitur = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/Clustering_Pertanian/main/Informasi%20Fitur.csv')
-    
+    fitur
 
 if selected == "Dataset":
     st.markdown("""<h2 style='text-align: center; color:grey;'> Dataset Breast Cancer Prediction </h1> """, unsafe_allow_html=True)
