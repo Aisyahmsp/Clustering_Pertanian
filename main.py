@@ -24,7 +24,7 @@ with st.sidebar:
             "margin": "0px",
             "--hover-color": "#4169E1",
         },
-        "nav-link-selected": {"background-color": "Royalblue"}
+        "nav-link-selected": {"background-color": "#E2725B"}
     }
     )
 
