@@ -113,7 +113,7 @@ if selected == "Deskripsi":
     st.write(""" Data yang digunakan merupakan data produktivitas pertanian yang diperoleh dari 
     Dinas Ketahanan Pangan dan Pertanian Kabupaten Sumenep Tahun 2020. Data dapat diakses melalui laman""")
     st.write(
-    '<a href="https://raw.githubusercontent.com/Aisyahmsp/Clustering_Pertanian/main/Informasi%20Fitur.csv">dataset produktivitas pertanian</a>',
+    """<a href="https://raw.githubusercontent.com/Aisyahmsp/Clustering_Pertanian/main/Informasi%20Fitur.csv">dataset produktivitas pertanian</a>""",
     unsafe_allow_html=True)
 
     <a href="https://raw.githubusercontent.com/Aisyahmsp/Clustering_Pertanian/main/Informasi%20Fitur.csv"> dataset produktivitas pertanian</a>
