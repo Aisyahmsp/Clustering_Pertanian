@@ -129,7 +129,7 @@ if selected == "Dataset":
         st.write("")
 
     with c2:
-        df
+        data
 
     with c3:
         st.write("")
@@ -147,6 +147,7 @@ if selected == "Preprocessing":
     """)
     
     st.subheader('Hasil Normalisasi Data')
+    data = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
     # MENGHAPUS FITUR YANG TIDAK RELEVAN
     # Tentukan daftar fitur yang ingin dihapus
     delete_fitur = ['No', 'Tanggal', 'Kecamatan', 'Desa']
