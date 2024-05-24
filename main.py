@@ -6,6 +6,8 @@ import altair as alt
 from PIL import Image
 from sklearn.preprocessing import MinMaxScaler
 from scipy.stats import mode
+from sklearn.metrics.pairwise import pairwise_distances
+from itertools import combinations
 
 # display
 st.set_page_config(page_title="Clustering", page_icon='logo.jpeg')
@@ -381,13 +383,75 @@ if selected == "Clustering K-Means":
             for kelompok in kelompok_tani:
                 st.write(f"- {kelompok}")
         
-
     with Nilai_DBI:
-        st.write("")
+        st.subheader("Nilai DBI")
+        # Hitung SSW untuk iterasi terakhir
+        SSW = np.zeros(num_clusters)
+        for i in range(num_clusters):
+            cluster_data = jarak_data_centroid_baru[label == i+1,0]
+            m_i = len(cluster_data)
+            if m_i==0:
+              SSW[i]=0
+            else:
+              SSW[i] = np.sum(cluster_data) / m_i
+        
+        # Menghitung SSB dengan jarak Hamming untuk fitur pertama hingga ketiga dan jarak Euclidean untuk fitur lainnya
+        SSB = np.zeros((num_clusters, num_clusters))
+        
+        for i, j in combinations(range(num_clusters), 2):
+            hamming_distance = np.sum(new_centroids[i, 7:] != new_centroids[j, 7:])
+            euclidean_distance = np.sqrt(np.sum((new_centroids[i, :7] - new_centroids[j, :7]) ** 2))
+            SSB[i, j] = hamming_distance + euclidean_distance
+            SSB[j, i] = SSB[i, j]  # Karena matriks simetris
+        
+        # Menghitung Rasio R_ij
+        R_ij = np.zeros((num_clusters, num_clusters))
+        for i, j in combinations(range(num_clusters), 2):
+            SSB_ij = SSB[i, j]
+            R_ij[i, j] = (SSW[i] + SSW[j]) / SSB_ij
+            R_ij[j, i] = R_ij[i, j]  # Karena matriks simetris
+        
+        # Hitung DBI
+        DBI = (np.sum(np.max(R_ij, axis=1)))/num_clusters
+        st.write("Nilai DBI K-Means dengan nilai k {num_clusters}: ", DBI)
 
     with Nilai_Silhouette:
-        st.write("")
-    
+        st.subheader("Nilai Silhouette Coefficent")
+        def hitung_intra_cluster(data_asli, label, centroids):
+            num_clusters = len(centroids)
+            intra_cluster = []
+            for i in range(num_clusters):
+                cluster_data = data_asli[label == (i + 1)]
+                if len(cluster_data) > 0:
+                    distances = (hitung_jarak(cluster_data, centroids))
+                    intra_cluster.append(distances.mean())
+                else:
+                    intra_cluster.append(0)
+            return np.sum(intra_cluster)
+        
+        def hitung_inter_cluster(centroids):
+            inter_cluster = 0
+            for (i, j) in combinations(range(len(centroids)), 2):
+                hamming_distance = np.sum(centroids[i, 7:] != centroids[j, 7:])
+                euclidean_distance = np.sqrt(np.sum((centroids[i, :7] - centroids[j, :7]) ** 2))
+                inter_cluster += hamming_distance + euclidean_distance
+            return inter_cluster
+        if len(hasil_iterasi) >= 2:
+            _, label_intra_baru, centroids_intra_baru = hasil_iterasi[-1]
+            intra_baru = hitung_intra_cluster(data_asli, label_intra_baru, centroids_intra_baru)
+            inter_baru = hitung_inter_cluster(centroids_intra_baru)
+        # Fungsi untuk menghitung silhouette coefficient
+        def compute_silhouette_coefficient(intra, inter):
+            if intra == 0 and inter == 0:
+                return 0
+            else:
+                return (inter - intra) / max(intra, inter)
+        
+        # Menghitung silhouette coefficient
+        silhouette_coefficient = compute_silhouette_coefficient(intra_baru, inter_baru)
+        
+        # Menampilkan hasil
+        st.write(" Nilai Silhouette Coefficient K-Means dengan nilai k {num_clusters}:", silhouette_coefficient)
 
 
 if selected == "Clustering BSDK":
