@@ -263,10 +263,13 @@ if selected == "Clustering K-Means":
         else:
             st.error("Jumlah cluster harus lebih besar dari 0.")
     with Rincian_Cluster:
+        st.write("")
 
     with Nilai_DBI:
+        st.write("")
 
     with Nilai_Silhouette:
+        st.write("")
     
 
 
