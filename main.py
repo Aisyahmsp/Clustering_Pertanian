@@ -373,6 +373,10 @@ if selected == "Clustering K-Means":
 
     with Rincian_Cluster:
         st.subheader("Rincian Hasil Cluster")
+        # Menggabungkan data asli dengan label clustering terakhir
+        data_with_group = data.copy()
+        data_with_group['Cluster'] = label
+        data_with_group.insert(0, 'Kelompok Tani', fitur_poktan)
         # Mengelompokkan data berdasarkan cluster dan menampilkan kelompok tani di setiap clusternya
         for cluster in sorted(data_with_group['Cluster'].unique()):
             kelompok_tani = data_with_group[data_with_group['Cluster'] == cluster]['Kelompok Tani'].tolist()
