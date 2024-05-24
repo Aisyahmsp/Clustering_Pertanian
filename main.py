@@ -9,13 +9,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.naive_bayes import GaussianNB
 
-st.markdown("""<h1 style='text-align: center;'> Breast Cancer Prediction Dataset </h1> """, unsafe_allow_html=True)
+st.markdown("""<h1 style='text-align: center;'> Pengelompokan Produktivitas Pertanian </h1> """, unsafe_allow_html=True)
 # 1. as sidevar menu
 with st.sidebar:
-    st.markdown("<h1 style='font-size:15px;text-align: center; color: black;'>Normalita Eka Ariyanti_200411100084</h1><h1 style='font-size:15px;text-align: center; color: black;'>Aisyatur Radiah_200411100116</h1>", unsafe_allow_html=True)
     selected = option_menu(
-        menu_title="Clustering", #required
-        options=["Beranda", "Description", "Dataset", "Preprocessing", "Clustering", "Evaluation", "Referensi"], #required
+        menu_title="Pilihan Menu", #required
+        options=["Beranda", "Deskripsi", "Dataset", "Preprocessing", "Clustering", "Evaluasi", "Referensi"], #required
         icons=["house-door-fill", "book-half", "bi bi-file-earmark-arrow-up-fill", "arrow-repeat","medium", "folder-fill", "bookmark-fill"], #optional
         menu_icon="cast", #optional
         default_index=0, #optional    
@@ -40,7 +39,7 @@ if selected == "Beranda":
         st.write("")
 
     with col2:
-        img = Image.open('breast cancer.jpg')
+        img = Image.open('pertanian.jpeg')
         st.image(img, use_column_width=False, width=300)
 
     with col3:
@@ -52,36 +51,48 @@ if selected == "Beranda":
     st.write(""" """)
 
     st.write("""
-    Di seluruh dunia, breast cancer adalah jenis kanker yang paling umum pada wanita dan tertinggi kedua
-    dalam hal angka kematian. Diagnosis kanker payudara dilakukan ketika ditemukan benjolan abnormal
-    (dari pemeriksaan sendiri atau rontgen) atau setitik kecil dari kalsium terlihat (pada x-ray). 
-    Setelah benjolan yang mencurigakan ditemukan, dokter akan melakukan diagnosa untuk menentukan
-    apakah itu kanker dan, jika demikian, apakah sudah menyebar ke bagian tubuh yang lain.
+    Pengelolaan pertanian yang efektif dengan memahami pola produktivitas pertanian di berbagai kelompok di Sumenep sangat diperlukan.
+    Hal tersebut dikarenakan produktivitas pertanian di Sumenep sangat beragam jenisnya, 
+    sehingga potensi hasil produksi di kelompok satu dengan kelompok lainnya belum tentu sama. 
+    Dengan melakukan analisis pola produktivitas, para petani, pemerintah, dan pemangku kebijakan lainnya 
+    dapat terbantu untuk melakukan berbagai pengambilan keputusan yang lebih baik terkait alokasi sumber daya, 
+    pengembangan pertanian berkelanjutan, dan pemberdayaan ekonomi desa.
 
-    Breast Cancer/ Kanker Payudara adalah kondisi ketika sel kanker terbentuk di jaringan payudara.
-    Breast Cancer bisa terbentuk di kelenjar yang menghasilkan susu (lobulus), 
-    atau di saluran (duktus) yang membawa air susu dari kelenjar ke puting payudara. 
-    Kanker juga bisa terbentuk di jaringan lemak atau jaringan ikat di dalam payudara. 
+    Salah satu pendekatan yang umum digunakan dalam menganalisis pola produktivitas adalah teknik clustering (pengelompokan).
+    Dalam ilmu datamining, clustering menjadi salah satu teknik untuk menganalisis data dengan cara mempartisi data dan 
+    membentuknya menjadi suatu kelompok. Konsep dari teknik clustering adalah mengelompokkan sekumpulan data yang memiliki 
+    kesamaan menjadi satu kelompok (cluster) dan yang lainnya kedalam kelompok (cluster) lainnya. Clustering telah banyak 
+    dimanfaatkan untuk penelitian di berbagai bidang, salah satunya pada pemetaan (pengelompokan) wilayah. 
     """)
     
     st.write("""
-    Kanker payudara terbentuk saat sel-sel di dalam payudara tumbuh tidak normal
-    dan tidak terkendali. Sel tersebut umumnya membentuk tumor yang terasa seperti benjolan. 
-    Meski biasanya terjadi pada wanita, kanker payudara juga bisa menyerang pria.
+    Algoritma yang umum digunakan dalam melakukan clustering ialah algoritma K-Means. 
+    Algoritma K-Means merupakan model pembelajaran unsupervised learning (pembelajaran tanpa pengawasan). 
+    Model pembelajaran seperti ini digunakan untuk kumpulan data yang belum pernah diberi label atau diklasifikasikan. 
+    Algoritma K-Means merupakan algoritma clustering berbasis pembagian jarak. Algoritma ini mudah dimengerti dan 
+    diterapkan sehingga banyak digunakan dalam menyelesaikan kasus tentang clustering.
     """)
 
-    st.write("""breast cancer adalah suatu kanker dimana bertumbuhnya serta berkembangnya sebuah sel-sel jaringan yang mengerikan 
-    yang tumbuh di area payudara.Kanker payudara merupakan kanker yang sering terjadi kedua di dunia dan kanker yang paling 
-    sering dirasakan oleh diantara wanita dengan perkiraan 1,67 juta kasus kanker baru yang didiagnosis pada tahun 2012
-     (25% dari semua kanker).
+    st.write("""Kelebihan dari algoritma K-Means ialah dapat diterapkan di banyak jenis pengelompokan dengan kesederhanaan 
+    penerapannya dan kompleksitas komputasi yang rendah. Namun, algoritma K-Means juga memiliki beberapa tantangan yang 
+    dapat berdampak negatif terhadap kinerja pengelompokannya. Salah satunya adalah dalam proses inisialisasi algoritma. 
+    Jumlah cluster dalam suatu kumpulan data harus ditentukan terlebih dahulu secara apriori dan pusat cluster (centroid) 
+    awal dipilih secara acak. Hal tersebut akan mempengaruhi performa algoritma terutama jika diterapkan pada kumpulan data 
+    yang besar. Menentukan jumlah cluster dan titik centroid yang optimal untuk memulai pengelompokan menjadi hal yang 
+    penting karena pemilihan pusat cluster (centroid) awal secara acak terkadang menghasilkan konvergensi lokal yang minimal.
+    Hal inilah yang menjadi dasar diperlukan pengulangan proses pemilihan pusat cluster (centroid) awal yang berbeda untuk 
+    mendapatkan hasil cluster yang optimal.
     """)
 
-    st.write("""Secara umum, semakin tinggi tingkat keparahan kanker (semakin berkembang dan menyebar), 
-    semakin kecil kemungkinan pengobatan yang dilakukan dapat menyembuhkan kanker payudara. 
-    Namun, pengobatan yang dilakukan dapat memperlambat perkembangan kanker.
+    st.write("""Berdasarkan penjelasan pada paragraf-paragraf sebelumnya, solusi yang dapat ditawarkan untuk mengoptimalkan 
+    dan menangani permasalahan penentuan centroid dan jumlah cluster pada algoritma K-Means adalah dengan memanfaatkan 
+    kombinasi algoritma Binary Search dan Dynamic K-Means. Binary Search merupakan algoritma pencarian yang efisien dan 
+    telah digunakan dalam berbagai konteks, namun belum banyak diaplikasikan dalam konteks optimasi K-Means. 
+    Pada penelitian sebelumnya, nilai Davies-Bouldin Index (DBI) dan Silhouette Coefficent juga diperoleh sebagai evaluasi 
+    hasil clustering.
     """)
 
-if selected == "Description":
+if selected == "Deskripsi":
     st.subheader("Pengertian")
     st.write(""" Di seluruh dunia, breast cancer (kanker payudara) adalah jenis kanker yang paling umum pada wanita dan tertinggi kedua dalam hal angka kematian. Diagnosis kanker payudara dilakukan ketika ditemukan benjolan abnormal (dari pemeriksaan sendiri atau rontgen) atau setitik kecil dari kalsium terlihat (pada x-ray). Setelah benjolan yang mencurigakan ditemukan, dokter akan melakukan diagnosa untuk menentukan apakah itu kanker dan, jika demikian, apakah sudah menyebar ke bagian tubuh yang lain.""")
     st.subheader("Kegunaan Dataset")
@@ -182,7 +193,7 @@ if selected == "Clustering":
     df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
 
 
-if selected == "Evaluation":
+if selected == "Evaluasi":
     df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
    
 if selected == "Referensi":
