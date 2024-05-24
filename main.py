@@ -40,7 +40,7 @@ if selected == "Beranda":
 
     with col2:
         img = Image.open('pertanian.jpeg')
-        st.image(img, use_column_width=False, width=300)
+        st.image(img, use_column_width=False, width=250)
 
     with col3:
         st.write("")
@@ -93,68 +93,31 @@ if selected == "Beranda":
     """)
 
 if selected == "Deskripsi":
-    st.subheader("Pengertian")
-    st.write(""" Di seluruh dunia, breast cancer (kanker payudara) adalah jenis kanker yang paling umum pada wanita dan tertinggi kedua dalam hal angka kematian. Diagnosis kanker payudara dilakukan ketika ditemukan benjolan abnormal (dari pemeriksaan sendiri atau rontgen) atau setitik kecil dari kalsium terlihat (pada x-ray). Setelah benjolan yang mencurigakan ditemukan, dokter akan melakukan diagnosa untuk menentukan apakah itu kanker dan, jika demikian, apakah sudah menyebar ke bagian tubuh yang lain.""")
-    st.subheader("Kegunaan Dataset")
+    st.subheader("Permasalahan")
+    st.write("""Ada beberapa kelemahan dalam penggunaan algoritma K-Means pada pengelompokan produktivitas pertanian 
+    di Kabupaten Sumenep. Salah satu kelemahan dari algoritma ini ialah jumlah cluster dalam suatu kumpulan data harus 
+    ditentukan terlebih dahulu secara apriori. Tidak ada ketentuan khusus untuk menentukan jumlah cluster yang ingin 
+    dibentuk. Selain itu, pemilihan pusat cluster (centroid) awal dilakukan secara acak. Hal tersebut akan mempengaruhi 
+    performa algoritma terutama jika diterapkan pada kumpulan data yang besar. Oleh karena itu, dibutuhkan algoritma 
+    tambahan yang dapat melengkapi kelemahan dari algoritma K-Means untuk melakukan pengelompokan pada produktivitas 
+    pertanian di Kabupaten Sumenep.""")
+    
+    st.subheader("Solusi")
     st.write(""" 
-    - Data yang digunakan dalam penelitian ini adalah data breast cancer. Dataset ini digunakan untuk mengidentifikasi breast cancer (kanker payudara) seorang pasien termasuk kelas jinak yang memiliki harapan kecil untuk terkena breast cancer (kanker payudara) atau ganas yang dikatakan breast cancer (kanker payudara) yang parah.Oleh karena itu, tujuan dari penelitian ini untuk adalah mengidentifikasi breast cancer secara dini, sehingga data yang digunakan adalah data diagnosis.
-    - Dalam data ini terdiri dari 5 atribut penentu apakah kanker tersebut jinak atau ganas, yaitu 
-        1. mean_radius
-        2. mean_texture
-        3. mean_area
-        3. mean_perimeter
-        4. mean_smoothness
-        5. diagnosis  """)
-    st.subheader(""" Penyebab dari Breast Cancer""")
-    st.write("""Beberapa faktor yang diketahui bisa meningkatkan risiko seseorang terkena kanker payudara adalah:
-1.  Usia. Peluang terkena kanker payudara meningkat seiring bertambahnya usia wanita. Hampir 80 persen kanker payudara ditemukan pada wanita di atas usia 50 tahun.
-
-2. Riwayat pribadi kanker payudara. Seorang wanita yang menderita kanker payudara di satu payudara berisiko lebih tinggi terkena kanker di payudara lainnya.
-
-3. Riwayat keluarga kanker payudara. Seorang wanita memiliki risiko lebih tinggi terkena kanker payudara jika ibu, saudara perempuan atau anak perempuannya menderita kanker payudara, terutama pada usia muda (sebelum 40 tahun). Memiliki kerabat lain dengan kanker payudara juga dapat meningkatkan risiko.
-
-4. Faktor genetik. Wanita dengan mutasi genetik tertentu, termasuk perubahan gen BRCA1 dan BRCA2, berisiko lebih tinggi terkena kanker payudara selama hidup mereka. Perubahan gen lainnya juga dapat meningkatkan risiko kanker payudara.
-
-5. Riwayat persalinan dan menstruasi. Semakin tua seorang wanita saat melahirkan anak pertamanya, semakin besar risikonya terkena kanker payudara. Juga berisiko lebih tinggi adalah:
-    - Wanita yang menstruasi pertama kali pada usia dini (sebelum 12 tahun)
-    - Wanita yang mengalami menopause terlambat (setelah usia 55 tahun)
-    - Wanita yang belum pernah memiliki anak
-
- """)
-    st.subheader(""" Tujuan""")
-    st.write(""" Analisis ini bertujuan untuk mengamati fitur mana yang paling membantu dalam memprediksi 
-    kanker ganas atau jinak dan untuk melihat tren umum yang dapat membantu kita dalam pemilihan model dan pemilihan parameter hiper. Tujuannya adalah untuk mengklasifikasikan apakah kanker payudara tersebut jinak atau ganas. Untuk mencapai ini saya telah menggunakan 
-    metode klasifikasi pembelajaran mesin agar sesuai dengan fungsi yang dapat memprediksi kelas diskrit input baru.""")
-    st.subheader("Fitur")
-    st.markdown(
-        """
-        Dalam 5 atribut ini, terdapat pengukuran yaitu rata-rata(mean), jarak rata- rata dari titik pusat ke tepi (radius),
-        nilai simpangan baku dari tingkat ke abu-abuan (texture), keliling (perimeter), luas area (area), variasi lokasi (smoothness). Berikut ini penjelasan secara rinci setiap fitur yang ada yaitu sebagai berikut :
+    Solusi permasalahan ini melibatkan pengembangan dan implementasi algoritma Binary Search Dynamic K-Means Clustering 
+    untuk mengelompokkan produktivitas pertanian di Kabupaten Sumenep. Binary Search digunakan untuk mengurutkan centroid 
+    dalam penentuan centroid awal, sehingga centroid yang dihasilkan bisa optimal. Sementara Dynamic K-Means digunakan 
+    untuk mengatasi inisialisasi jumlah cluster secara dinamis. Sehingga nantinya didapatkan jumlah cluster paling optimal 
+    pada data tersebut. Penggabungan kedua algoritma ini memungkinkan identifikasi kelompok pertanian yang serupa secara 
+    otomatis, yang dapat membantu pemerintah dan pemangku kepentingan dalam mengambil keputusan yang lebih baik terkait 
+    pengembangan sektor pertanian di daerah ini.  """)
     
-        - mean_radius : rata-rata jarak dari tepi sel breast cancer ke centroid sel tumor tersebut, 
-
-        - mean_texture :  deviasi standar nilai skala abu-abu
-
-        - mean_perimeter :panjang dari keliling sel breast cancer
-
-        - mean_area : luas (jumlah piksel) dari sel breast cancer 
-
-        - mean_smoothness: perbedaan antara panjang garis radial dengan rerata panjang garis radialyang mengelilingi garis radial tersebut.
-
-        - Diagnosis: Diagnosis jaringan breast cancer 
-                       0- jinak, 1- ganas
-        """
-    )
-
-    st.subheader("""Sumber Dataset""")
-    st.write("""
-    Sumber data di dapatkan melalui website kaggle.com, Berikut merupakan link untuk mengakses sumber dataset.
-    <a href="https://www.kaggle.com/datasets/merishnasuwal/breast-cancer-prediction-dataset"> kaggle dataset</a>""", unsafe_allow_html=True)
+    st.subheader("""Sumber Data""")
+    st.write(""" Data yang digunakan merupakan data produktivitas pertanian yang diperoleh dari 
+    Dinas Ketahanan Pangan dan Pertanian Kabupaten Sumenep Tahun 2020. Data dapat diakses melalui laman <a href="https://www.kaggle.com/datasets/merishnasuwal/breast-cancer-prediction-dataset"> dataset produktivitas pertanian</a>""")
     
-    st.subheader("""Tipe Data""")
-    st.write("""
-    Tipe data yang di gunakan pada dataset breast cancer ini adalah NUMERICAL.
-    """)
+    st.subheader(""" Informasi Detail Fitur""")
+    fitur = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
     
 
 if selected == "Dataset":
