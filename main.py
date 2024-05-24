@@ -250,7 +250,7 @@ if selected == "Clustering K-Means":
     
     with Hasil_Clustering:
         # Memasukkan jumlah cluster menggunakan Streamlit
-        num_clusters = int(input("Masukkan jumlah cluster: "))
+        num_clusters = st.number_input("Masukkan jumlah cluster:", min_value=1, max_value=len(data), step=1, value=3)
         # Mendapatkan nilai centroid awal dari n baris pertama data secara acak
         centroids = data.sample(n=num_clusters, random_state=42)
         centroid = centroids.values
