@@ -11,7 +11,7 @@ st.markdown("""<h1 style='text-align: center;'> Pengelompokan Produktivitas Pert
 with st.sidebar:
     selected = option_menu(
         menu_title="Pilihan Menu", #required
-        options=["Beranda", "Deskripsi", "Dataset", "Preprocessing", "Clustering", "Evaluasi", "Referensi"], #required
+        options=["Beranda", "Deskripsi", "Dataset", "Preprocessing", "Clustering K-Means", "Clustering BSDK", "Referensi"], #required
         icons=["house-door-fill", "book-half", "bi bi-file-earmark-arrow-up-fill", "arrow-repeat","medium", "folder-fill", "bookmark-fill"], #optional
         menu_icon="cast", #optional
         default_index=0, #optional    
@@ -22,7 +22,7 @@ with st.sidebar:
             "font-size": "17px",
             "text-align": "left",
             "margin": "0px",
-            "--hover-color": "#4169E1",
+            "--hover-color": "#F4A261",
         },
         "nav-link-selected": {"background-color": "#E2725B"}
     }
@@ -195,12 +195,18 @@ if selected == "Preprocessing":
     # Menampilkan dataframe setelah normalisasi
     data
 
-if selected == "Clustering":
+if selected == "Clustering K-Means":
     df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
+    st.subheader('Nilai DBI')
+    st.subheader('Nilai Sillhouette')
+    st.subheader('Hasil Clustering')
 
 
-if selected == "Evaluasi":
+if selected == "Clustering BSDK":
     df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
+    st.subheader('Nilai DBI')
+    st.subheader('Nilai Sillhouette')
+    st.subheader('Hasil Clustering')
    
 if selected == "Referensi":
     col1, col2, col3 = st.columns([1,2,1])
