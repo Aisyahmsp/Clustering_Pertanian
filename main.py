@@ -250,8 +250,7 @@ if selected == "Clustering K-Means":
     
     with Hasil_Clustering:
         # Memasukkan jumlah cluster menggunakan Streamlit
-        num_clusters = st.number_input("Masukkan jumlah cluster:", min_value=1, max_value=len(data), step=1, value=3)
-        st.subheader("""Hasil Clustering""")
+        num_clusters = int(input("Masukkan jumlah cluster: "))
         # Mendapatkan nilai centroid awal dari n baris pertama data secara acak
         centroids = data.sample(n=num_clusters, random_state=42)
         centroid = centroids.values
@@ -322,61 +321,58 @@ if selected == "Clustering K-Means":
                 new_centroids.append(centroid_row)
         
             return np.array(new_centroids)
-            # Inisialisasi variabel
-            max_iter = 100
-            iter_count = 0
-            prev_label = None
-            
-            # List untuk menyimpan hasil iterasi
-            hasil_iterasi = []
-            
-            # Iterasi K-Means
-            while True:
-                # Increment iterasi
-                iter_count += 1
-            
-                # Update centroid
-                new_centroids = update_centroid(data_asli, label, num_clusters,centroids)
-            
-                # Hitung jarak antara data dan centroid baru
-                jarak_data_centroid_baru = hitung_jarak(data_asli, new_centroids)
-            
-                # Memilih jarak terkecil untuk setiap baris
-                jarak_terkecil_baru = np.argmin(jarak_data_centroid_baru, axis=1)
-            
-                # Mengecek konvergensi dengan membandingkan hasil label dengan iterasi sebelumnya
-                if prev_label is not None and np.array_equal(jarak_terkecil_baru +1, prev_label):
-                    st.write(f"Konvergensi dicapai setelah iterasi ke-{iter_count}.")
-                    hasil_iterasi.append((iter_count, label, new_centroids))
-                    break
-            
-                # Update label
-                label = jarak_terkecil_baru +1
-            
-                # Simpan label untuk iterasi berikutnya
-                prev_label = np.copy(label)
-            
-                # Menyimpan hasil iterasi
+        # Inisialisasi variabel
+        max_iter = 100
+        iter_count = 0
+        prev_label = None
+        
+        # List untuk menyimpan hasil iterasi
+        hasil_iterasi = []
+        
+        # Iterasi K-Means
+        while True:
+            # Increment iterasi
+            iter_count += 1
+        
+            # Update centroid
+            new_centroids = update_centroid(data_asli, label, num_clusters,centroids)
+        
+            # Hitung jarak antara data dan centroid baru
+            jarak_data_centroid_baru = hitung_jarak(data_asli, new_centroids)
+        
+            # Memilih jarak terkecil untuk setiap baris
+            jarak_terkecil_baru = np.argmin(jarak_data_centroid_baru, axis=1)
+        
+            # Mengecek konvergensi dengan membandingkan hasil label dengan iterasi sebelumnya
+            if prev_label is not None and np.array_equal(jarak_terkecil_baru +1, prev_label):
+                st.write(f"Konvergensi dicapai setelah iterasi ke-{iter_count}.")
                 hasil_iterasi.append((iter_count, label, new_centroids))
-            
-                # Memeriksa apakah sudah mencapai maksimum iterasi
-                if iter_count >= max_iter:
-                    break
-                # Menggabungkan data asli dengan label clustering terakhir
-                data_with_group = data.copy()
-                data_with_group['Cluster'] = label
-                data_with_group.insert(0, 'Kelompok Tani', fitur_poktan)
-                
-                # Menampilkan hasil clustering terakhir dengan nama kelompok tani
-                st.write("Hasil Clustering Terakhir dengan Nama Kelompok Tani dan labelnya:")
-                data_with_group
-
-    with Rincian_Cluster:
-        st.subheader("Rincian Hasil Cluster")
+                break
+        
+            # Update label
+            label = jarak_terkecil_baru +1
+        
+            # Simpan label untuk iterasi berikutnya
+            prev_label = np.copy(label)
+        
+            # Menyimpan hasil iterasi
+            hasil_iterasi.append((iter_count, label, new_centroids))
+        
+            # Memeriksa apakah sudah mencapai maksimum iterasi
+            if iter_count >= max_iter:
+                st.write("Maksimum iterasi telah dicapai.")
+                break
         # Menggabungkan data asli dengan label clustering terakhir
         data_with_group = data.copy()
         data_with_group['Cluster'] = label
         data_with_group.insert(0, 'Kelompok Tani', fitur_poktan)
+        
+        # Menampilkan hasil clustering terakhir dengan nama kelompok tani
+        st.write("Hasil Clustering Terakhir dengan Nama Kelompok Tani dan labelnya:")
+        data_with_group
+
+    with Rincian_Cluster:
+        st.subheader("Rincian Hasil Cluster")
         # Mengelompokkan data berdasarkan cluster dan menampilkan kelompok tani di setiap clusternya
         for cluster in sorted(data_with_group['Cluster'].unique()):
             kelompok_tani = data_with_group[data_with_group['Cluster'] == cluster]['Kelompok Tani'].tolist()
