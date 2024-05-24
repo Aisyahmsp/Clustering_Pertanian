@@ -115,8 +115,6 @@ if selected == "Deskripsi":
     st.write(
     """<a href="https://raw.githubusercontent.com/Aisyahmsp/Clustering_Pertanian/main/Informasi%20Fitur.csv">dataset produktivitas pertanian</a>""",
     unsafe_allow_html=True)
-
-    <a href="https://raw.githubusercontent.com/Aisyahmsp/Clustering_Pertanian/main/Informasi%20Fitur.csv"> dataset produktivitas pertanian</a>
     
     st.subheader(""" Informasi Detail Fitur""")
     fitur = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/Clustering_Pertanian/main/Informasi%20Fitur.csv')
