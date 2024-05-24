@@ -413,7 +413,7 @@ if selected == "Clustering K-Means":
         
         # Hitung DBI
         DBI = (np.sum(np.max(R_ij, axis=1)))/num_clusters
-        st.write("Nilai DBI K-Means dengan nilai k {num_clusters}: ", DBI)
+        st.write("Nilai DBI K-Means: ", DBI)
 
     with Nilai_Silhouette:
         st.subheader("Nilai Silhouette Coefficent")
@@ -451,7 +451,7 @@ if selected == "Clustering K-Means":
         silhouette_coefficient = compute_silhouette_coefficient(intra_baru, inter_baru)
         
         # Menampilkan hasil
-        st.write(" Nilai Silhouette Coefficient K-Means dengan nilai k {num_clusters}:", silhouette_coefficient)
+        st.write(" Nilai Silhouette Coefficient K-Means:", silhouette_coefficient)
 
 
 if selected == "Clustering BSDK":
