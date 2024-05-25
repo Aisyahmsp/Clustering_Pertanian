@@ -413,7 +413,7 @@ if selected == "Clustering K-Means":
         
         # Hitung DBI
         DBI = (np.sum(np.max(R_ij, axis=1)))/num_clusters
-        st.write("Nilai DBI K-Means: ", DBI)
+        st.write(f"Nilai DBI K-Means dengan nilai k = {num_clusters}: ", DBI)
 
     with Nilai_Silhouette:
         st.subheader("Nilai Silhouette Coefficent")
@@ -451,14 +451,265 @@ if selected == "Clustering K-Means":
         silhouette_coefficient = compute_silhouette_coefficient(intra_baru, inter_baru)
         
         # Menampilkan hasil
-        st.write(" Nilai Silhouette Coefficient K-Means:", silhouette_coefficient)
+        st.write(f"Nilai Silhouette Coefficient K-Means dengan nilai k = {num_clusters}:", silhouette_coefficient)
 
 
 if selected == "Clustering BSDK":
-    df = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
-    st.subheader('Nilai DBI')
-    st.subheader('Nilai Sillhouette')
-    st.subheader('Hasil Clustering')
+    data = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
+    # MENGHAPUS FITUR YANG TIDAK RELEVAN
+    # Tentukan daftar fitur yang ingin dihapus
+    delete_fitur = ['No', 'Tanggal', 'Kecamatan', 'Desa']
+    # Gunakan metode drop untuk menghapus fitur dari DataFrame
+    data_clean = data.drop(delete_fitur, axis=1)
+    # Tampilkan DataFrame setelah fitur dihapus
+    data = data_clean
+    # Tentukan fitur yang ingin dihapus sementara
+    fitur_poktan = data['Kelompok Tani']
+    # Hapus fitur desa dari DataFrame
+    data.drop('Kelompok Tani', axis=1, inplace=True)
+
+    # TRANSFORMASI DATA
+    # Fitur-fitur yang ingin diperiksa
+    fitur_list = ['Komoditas', 'Varietas', 'Jenis OPT']
+    
+    # Mendapatkan daftar nilai unik yang sudah diurutkan dan mengganti nilai dalam kolom dengan angka sesuai urutan nilai unik
+    for fitur in fitur_list:
+        unique_values = sorted(data[fitur].unique())
+        data[f'{fitur}_Kode'] = data[fitur].map({value: i + 1 for i, value in enumerate(unique_values)})
+    
+    # Menampilkan DataFrame dengan kolom baru untuk setiap fitur
+    fitur_kode_columns = [f'{fitur}_Kode' for fitur in fitur_list]
+    # Drop fitur 'Komoditas', 'Varietas', dan 'Jenis Opt'
+    data.drop(['Komoditas', 'Varietas', 'Jenis OPT'], axis=1, inplace=True)
+    # Rename fitur menjadi 'Komoditas_Kode', 'Varietas_Kode', dan 'Jenis_Opt_Kode'
+    data.rename(columns={'Komoditas_Kode': 'Komoditas', 'Varietas_Kode': 'Varietas', 'Jenis OPT_Kode': 'Jenis_OPT'}, inplace=True)
+
+    # MISSING VALUE
+    data['Luas Terserang (Ha)'] = pd.to_numeric(data['Luas Terserang (Ha)'], errors='coerce')
+    data['Intensitas (%)'] = pd.to_numeric(data['Intensitas (%)'], errors='coerce')
+    # Menampilkan nilai mean dari masing-masing fitur
+    mean_values = data.mean()
+    # Mengganti nilai null dengan nilai mean
+    data = data.fillna(mean_values)
+
+    # NORMALISASI DATA
+    # Fitur-fitur yang ingin dinormalisasi
+    fitur_list = ['Luas Tanam (ha)', 'Stadia/Umur Tanaman (hst)', 'Pupuk Bersubsidi Organik dan Anorganik (Ton)',
+                  'Luas Terserang (Ha)', 'Intensitas (%)','Luas Waspada (Ha)','Hasil Panen (ton)']
+    # Membuat objek MinMaxScaler
+    scaler = MinMaxScaler()
+    # Melakukan normalisasi Min-Max Scalar hanya pada fitur yang dipilih
+    data[fitur_list] = scaler.fit_transform(data[fitur_list])
+
+    Hasil_Clustering, Rincian_Cluster, Nilai_DBI, Nilai_Silhouette = st.tabs(["Hasil Clustering", "Rincian Cluster", "Nilai DBI", "Nilai Silhouette"])
+    
+    with Hasil_Clustering:
+        # Memasukkan nilai jumlah cluster
+        num_clusters = st.number_input("Masukkan jumlah cluster:", min_value=1, max_value=len(data), step=1, value=3)
+        # Mencari nilai min dan max untuk setiap fitur
+        min_values = data.min()
+        max_values = data.max()
+        # Mendapatkan nilai range untuk setiap fitur
+        ranges = (max_values - min_values) / num_clusters
+        # Menentukan nilai centroid awal untuk setiap fitur
+        centroids_binary_search = []
+        for k in range(1, num_clusters + 1):
+            centroid_row = []
+            for i in range(len(min_values)):
+                if i in [7, 8, 9]:  # Fitur ke-8, 9, dan 10
+                    centroid_value = round(min_values[i] + (k - 1) * ranges[i])
+                else:
+                    centroid_value = min_values[i] + (k - 1) * ranges[i]
+                centroid_row.append(centroid_value)
+            centroids_binary_search.append(centroid_row)
+        
+        # Konversi ke DataFrame untuk tampilan yang lebih baik
+        centroids = pd.DataFrame(centroids_binary_search, columns=data.columns)
+        centroid = centroids.values
+        data_asli = data.values
+        # Mendefinisikan fungsi untuk menghitung jarak antara data dan centroid
+        def hitung_jarak(data, centroid):
+            jarak = []
+            for i in range(len(data)):
+                jarak_centroid = []
+                for j in range(len(centroid)):
+                    total_euclidean = 0
+                    total_hamming = 0
+                    for k in range(len(data[i])):
+                        if k < 7:  # Kolom 1-7 menggunakan Euclidean Distance
+                            total_euclidean += (data[i][k] - centroid[j][k])**2
+                        else:  # Kolom 8, 9, 10 menggunakan Hamming Distance
+                            if data[i][k] != centroid[j][k]:
+                                total_hamming += 1
+                    total_euclidean = np.sqrt(total_euclidean)  # Akar dari total Euclidean Distance
+                    total_jarak = total_euclidean + total_hamming  # Total jarak = Euclidean + Hamming
+                    jarak_centroid.append(total_jarak)
+                jarak.append(jarak_centroid)
+            return np.array(jarak)
+        
+        # Menghitung jarak antara data asli dan centroid
+        jarak_data_centroid = hitung_jarak(data_asli, centroid)
+        # Memilih jarak terkecil untuk setiap baris
+        jarak_terkecil = np.argmin(jarak_data_centroid, axis=1)
+        # Menampilkan label berdasarkan jarak terkecil
+        label = jarak_terkecil + 1
+        def update_centroid(data_asli, label, num_clusters, centroids):
+            # Mengelompokkan data berdasarkan label cluster
+            data_cluster = {}
+            for i in range(1, num_clusters + 1):
+                data_cluster[i] = data_asli[label == i]
+            # Memperbarui centroid
+            new_centroids = []
+            # Loop untuk setiap cluster
+            for i in range(1, num_clusters + 1):
+                cluster_data = data_cluster[i]
+                centroid_row = []
+                # Jika klaster kosong, gunakan centroid sebelumnya
+                if len(cluster_data) == 0:
+                   centroid_row = centroid[i-1]  # Gunakan centroid sebelumnya
+                else:
+                    # Hitung nilai rata-rata untuk kolom 1 sampai 7
+                    for j in range(7):
+                        mean_value = np.mean(cluster_data[:, j])
+                        centroid_row.append(mean_value)
+                    # Hitung nilai yang paling sering muncul untuk kolom 8, 9, dan 10
+                    for j in range(7, 10):
+                        mode_values = mode(cluster_data[:, j])[0]  # Mengambil nilai yang paling sering muncul
+                        if isinstance(mode_values, np.ndarray):  # Memeriksa apakah ada lebih dari satu mode
+                            mode_value = mode_values[0]  # Mengambil nilai pertama dari hasil mode
+                        else:
+                            mode_value = mode_values  # Jika hanya ada satu mode, gunakan nilai tersebut
+                        centroid_row.append(mode_value)
+                # Tambahkan baris centroid ke daftar centroid baru
+                new_centroids.append(centroid_row)
+            return np.array(new_centroids)
+        # Inisialisasi variabel
+        max_iter = 100
+        iter_count = 0
+        prev_label = None
+        # List untuk menyimpan hasil iterasi
+        hasil_iterasi = []
+          # Iterasi K-Means
+        while True:
+             # Increment iterasi
+             iter_count += 1
+              # Update centroid
+             new_centroids = update_centroid(data_asli, label, num_clusters,centroids)
+              # Hitung jarak antara data dan centroid baru
+             jarak_data_centroid_baru = hitung_jarak(data_asli, new_centroids)
+              # Memilih jarak terkecil untuk setiap baris
+             jarak_terkecil_baru = np.argmin(jarak_data_centroid_baru, axis=1)
+              # Mengecek konvergensi dengan membandingkan hasil label dengan iterasi sebelumnya
+             if prev_label is not None and np.array_equal(jarak_terkecil_baru +1, prev_label):
+                  st.write(f"Konvergensi dicapai setelah iterasi ke-{iter_count}.")
+                  hasil_iterasi.append((iter_count, label, new_centroids))
+                  break
+              # Update label
+             label = jarak_terkecil_baru +1
+              # Simpan label untuk iterasi berikutnya
+             prev_label = np.copy(label)
+              # Menyimpan hasil iterasi
+             hasil_iterasi.append((iter_count, label, new_centroids))
+              # Memeriksa apakah sudah mencapai maksimum iterasi
+             if iter_count >= max_iter:
+                  break
+        def hitung_intra_cluster(data_asli, label, centroids):
+            num_clusters = len(centroids)
+            intra_cluster = []
+            for i in range(num_clusters):
+                cluster_data = data_asli[label == (i + 1)]
+                if len(cluster_data) > 0:
+                    distances = (hitung_jarak(cluster_data, centroids))
+                    intra_cluster.append(distances.mean())
+                else:
+                    intra_cluster.append(0)
+            return np.sum(intra_cluster)
+        
+        def hitung_inter_cluster(centroids):
+            inter_cluster = 0
+            for (i, j) in combinations(range(len(centroids)), 2):
+                hamming_distance = np.sum(centroids[i, 7:] != centroids[j, 7:])
+                euclidean_distance = np.sqrt(np.sum((centroids[i, :7] - centroids[j, :7]) ** 2))
+                inter_cluster += hamming_distance + euclidean_distance
+            return inter_cluster
+        while True:
+          if len(hasil_iterasi) >= 2:
+            _, label_intra_lama, centroids_intra_lama = hasil_iterasi[-2]
+            _, label_intra_baru, centroids_intra_baru = hasil_iterasi[-1]
+            intra_lama = hitung_intra_cluster(data_asli, label_intra_lama, centroids_intra_lama)
+            intra_baru = hitung_intra_cluster(data_asli, label_intra_baru, centroids_intra_baru)
+            inter_lama = hitung_inter_cluster(centroids_intra_lama)
+            inter_baru = hitung_inter_cluster(centroids_intra_baru)
+        
+            if intra_baru < intra_lama and inter_baru > inter_lama:
+                st.write("intra_baru < intra_lama dan inter_baru > inter_lama")
+                st.write(f"Menambah jumlah cluster menjadi {num_clusters+1}. Mulai iterasi ulang.")
+            else:
+                st.write(f"Jumlah cluster optimal: {num_clusters}")
+                break
+          else:
+            st.write("Tidak cukup iterasi untuk menghitung intra-cluster dan inter-cluster.")
+          break
+        # Menggabungkan data asli dengan label clustering terakhir
+        data_with_group = data.copy()
+        data_with_group['Cluster'] = label
+        data_with_group.insert(0, 'Kelompok Tani', fitur_poktan)
+        
+        # Menampilkan hasil clustering terakhir dengan nama kelompok tani
+        st.write("Hasil Clustering Terakhir dengan Nama Kelompok Tani dan labelnya:")
+        data_with_group
+        
+    with Rincian_Cluster:
+        st.subheader("Rincian Hasil Cluster")
+        # Mengelompokkan data berdasarkan cluster dan menampilkan kelompok tani di setiap clusternya
+        for cluster in sorted(data_with_group['Cluster'].unique()):
+            kelompok_tani = data_with_group[data_with_group['Cluster'] == cluster]['Kelompok Tani'].tolist()
+            jumlah_kelompok = len(kelompok_tani)
+            st.subheader(f"\nCluster {cluster} terdiri dari {jumlah_kelompok} kelompok tani berikut:")
+            for kelompok in kelompok_tani:
+                st.write(f"- {kelompok}")
+                
+    with Nilai_DBI:
+        st.subheader("Nilai DBI")
+        # Hitung SSW untuk iterasi terakhir
+        SSW = np.zeros(num_clusters)
+        for i in range(num_clusters):
+            cluster_data = jarak_data_centroid_baru[label == i+1,0]
+            m_i = len(cluster_data)
+            if m_i==0:
+              SSW[i]=0
+            else:
+              SSW[i] = np.sum(cluster_data) / m_i
+        # Menghitung SSB dengan jarak Hamming untuk fitur pertama hingga ketiga dan jarak Euclidean untuk fitur lainnya
+        SSB = np.zeros((num_clusters, num_clusters))
+        for i, j in combinations(range(num_clusters), 2):
+            hamming_distance = np.sum(new_centroids[i, 7:] != new_centroids[j, 7:])
+            euclidean_distance = np.sqrt(np.sum((new_centroids[i, :7] - new_centroids[j, :7]) ** 2))
+            SSB[i, j] = hamming_distance + euclidean_distance
+            SSB[j, i] = SSB[i, j]  # Karena matriks simetris
+        # Menghitung Rasio R_ij
+        R_ij = np.zeros((num_clusters, num_clusters))
+        for i, j in combinations(range(num_clusters), 2):
+            SSB_ij = SSB[i, j]
+            R_ij[i, j] = (SSW[i] + SSW[j]) / SSB_ij
+            R_ij[j, i] = R_ij[i, j]  # Karena matriks simetris
+        
+        # Hitung DBI
+        DBI = (np.sum(np.max(R_ij, axis=1)))/num_clusters
+        st.write(f"Nilai DBI BSDK dengan nilai k = {num_clusters}: ", DBI)
+        
+    with Nilai_Silhouette:
+        st.subheader("Nilai Silhouette Coefficent")
+        # Fungsi untuk menghitung silhouette coefficient
+        def compute_silhouette_coefficient(intra, inter):
+            if intra == 0 and inter == 0:
+                return 0
+            else:
+                return (inter - intra) / max(intra, inter)
+        # Menghitung silhouette coefficient
+        silhouette_coefficient = compute_silhouette_coefficient(intra_baru, inter_baru)
+        # Menampilkan hasil
+        st.write(f"Nilai Silhouette Coefficient BSDK dengan k = {num_clusters}:", silhouette_coefficient)
    
 if selected == "Referensi":
     col1, col2, col3 = st.columns([1,2,1])
@@ -474,8 +725,8 @@ if selected == "Referensi":
     
     st.write(""" """)
 
-    st.title (f"BIODATA PRIBADI")
-    st.markdown(" Aisyah Meta Sari Putri (200411100031)", unsafe_allow_html=True)
+    st.title (f"BIODATA")
+    st.markdown("<h1 style='font-size:15px;text-align: left; color: black;'>Aisyah Meta Sari Putri (200411100031)</h1>", unsafe_allow_html=True)
     st.markdown("<h1 style='font-size:15px;text-align: left; color: black;'>Dosen Pembimbing 1 : Dr. Bain Khusnul Khotimah, S.T., M.Kom.</h1>", unsafe_allow_html=True)
     st.markdown("<h1 style='font-size:15px;text-align: left; color: black;'>Dosen Pembimbing 2 : Dr. Rika Yunitarini, S.T., M.T.</h1>", unsafe_allow_html=True)
 
