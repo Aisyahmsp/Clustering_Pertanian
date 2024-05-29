@@ -117,7 +117,7 @@ if selected == "Deskripsi":
     
     st.subheader("""Sumber Data""")
     st.write(""" Data yang digunakan merupakan data produktivitas pertanian yang diperoleh dari 
-    Dinas Ketahanan Pangan dan Pertanian Kabupaten Sumenep Tahun 2020. Data dapat diakses melalui laman""")
+    Dinas Ketahanan Pangan dan Pertanian Kabupaten Sumenep Tahun 2022. Data dapat diakses melalui laman""")
     st.write(
     """<a href="https://raw.githubusercontent.com/Aisyahmsp/Clustering_Pertanian/main/Informasi%20Fitur.csv">dataset produktivitas pertanian</a>""",
     unsafe_allow_html=True)
@@ -127,7 +127,7 @@ if selected == "Deskripsi":
     fitur
 
 if selected == "Dataset":
-    st.markdown("""<h2 style='text-align: center; color:grey;'> Dataset Produktivitas Pertanian Kabupaten Sumenep Tahun 2020 </h1> """, unsafe_allow_html=True)
+    st.markdown("""<h2 style='text-align: center; color:grey;'> Dataset Produktivitas Pertanian Kabupaten Sumenep Tahun 2022 </h1> """, unsafe_allow_html=True)
     data = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
     c1, c2, c3 = st.columns([1,5,1])
 
@@ -733,5 +733,13 @@ if selected == "Referensi":
     st.title (f"REFERENSI")
     st.subheader("""Sumber Dataset""")
     st.write("""
-    Sumber data di dapatkan dari Dinas Ketahanan Pangan dan Pertanian Kabupaten Sumenep Tahun 2020.
+    Sumber data di dapatkan dari Dinas Ketahanan Pangan dan Pertanian Kabupaten Sumenep Tahun 2022.
+   """)
+    st.subheader("""Sumber Jurnal""")
+    st.write("""
+   -  M. Y. Nurzaman and B. Nurina Sari, “Implementasi K-Means Clustering Dalam Pengelompokan Banyaknya Jumlah Petani Berdasarkan Kecamatan Di Provinsi Jawa Barat,” Jurnal Teknik Informatika dan Sistem Informasi, vol. 10, no. 3, 2023, [Online]. Available: http://jurnal.mdp.ac.id
+   - Sekar Setyaningtyas, B. Indarmawan Nugroho, and Z. Arif, “Tinjauan Pustaka Sistematis Pada Data Mining : Studi Kasus Algoritma K-Means Clustering,” Jurnal Teknoif Teknik Informatika Institut Teknologi Padang, vol. 10, no. 2, pp. 52–61, Oct. 2022, doi: 10.21063/jtif.2022.v10.2.52-61.
+   - N. A. Khairani and E. Sutoyo, “Application of K-Means Clustering Algorithm for Determination of Fire-Prone Areas Utilizing Hotspots in West Kalimantan Province,” International Journal of Advances in Data and Information Systems, vol. 1, no. 1, pp. 9–16, Apr. 2020, doi: 10.25008/ijadis.v1i1.13.
+   - P. Trisnawati and A. I. Purnamasari, “Penerapan Pengelompokkan Produktivitas Hasil Pertanian Menggunakan Algoritma K-Means,” Infotek: Jurnal Informatika dan Teknologi, vol. 6, no. 2, pp. 249–257, 2023.
+   - H. Santoso, H. Magdalena, and H. Wardhana, “Aplikasi Dynamic Cluster pada K-Means BerbasisWeb untuk Klasifikasi Data Industri Rumahan,” MATRIK: Jurnal Manajemen, Teknik Informatika dan Rekayasa Komputer, vol. 21, no. 3, pp. 541–554, 2022.
    """)
