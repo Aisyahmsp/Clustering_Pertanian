@@ -248,7 +248,7 @@ if selected == "Clustering K-Means":
     # Melakukan normalisasi Min-Max Scalar hanya pada fitur yang dipilih
     data[fitur_list] = scaler.fit_transform(data[fitur_list])
 
-    Hasil_Clustering, Rincian_Cluster, Nilai_DBI, Nilai_Silhouette = st.tabs(["Hasil Clustering", "Rincian Cluster", "Nilai DBI", "Nilai Silhouette"])
+    Hasil_Clustering, Rincian_Cluster, Analisa_Fitur, Nilai_DBI, Nilai_Silhouette = st.tabs(["Hasil Clustering", "Rincian Cluster", "Analisa Fitur", "Nilai DBI", "Nilai Silhouette"])
     
     with Hasil_Clustering:
         # Memasukkan jumlah cluster menggunakan Streamlit
@@ -383,6 +383,16 @@ if selected == "Clustering K-Means":
             for kelompok in kelompok_tani:
                 st.write(f"- {kelompok}")
         
+    with Rincian_Cluster:
+        st.subheader("Rincian Hasil Cluster")
+        # Mengelompokkan data berdasarkan cluster dan menampilkan kelompok tani di setiap clusternya
+        for cluster in sorted(data_with_group['Cluster'].unique()):
+            kelompok_tani = data_with_group[data_with_group['Cluster'] == cluster]['Kelompok Tani'].tolist()
+            jumlah_kelompok = len(kelompok_tani)
+            st.subheader(f"\nCluster {cluster} terdiri dari {jumlah_kelompok} kelompok tani berikut:")
+            for kelompok in kelompok_tani:
+                st.write(f"- {kelompok}")
+                
     with Nilai_DBI:
         st.subheader("Nilai DBI")
         # Hitung SSW untuk iterasi terakhir
