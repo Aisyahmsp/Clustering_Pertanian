@@ -383,15 +383,34 @@ if selected == "Clustering K-Means":
             for kelompok in kelompok_tani:
                 st.write(f"- {kelompok}")
         
-    with Rincian_Cluster:
-        st.subheader("Rincian Hasil Cluster")
-        # Mengelompokkan data berdasarkan cluster dan menampilkan kelompok tani di setiap clusternya
-        for cluster in sorted(data_with_group['Cluster'].unique()):
-            kelompok_tani = data_with_group[data_with_group['Cluster'] == cluster]['Kelompok Tani'].tolist()
-            jumlah_kelompok = len(kelompok_tani)
-            st.subheader(f"\nCluster {cluster} terdiri dari {jumlah_kelompok} kelompok tani berikut:")
-            for kelompok in kelompok_tani:
-                st.write(f"- {kelompok}")
+    with Analisa_Fitur:
+        # Menggabungkan data asli dengan label clustering terakhir
+        data_with_label = data.copy()
+        data_with_label['Cluster'] = label
+        # Menginisialisasi dictionary untuk menyimpan ranking fitur per cluster
+        ranked_features_by_cluster = {}
+        
+        # Mendapatkan jumlah cluster unik
+        clusters = data_with_label['Cluster'].unique()
+        
+        # Melakukan perulangan untuk setiap cluster
+        for cluster in clusters:
+            # Memilih data yang hanya termasuk dalam cluster saat ini
+            cluster_data = data_with_label[data_with_label['Cluster'] == cluster]
+        
+            # Menghitung nilai mean absolut dari setiap fitur (pengaruh rata-rata)
+            impact_scores = cluster_data.drop(columns='Cluster').abs().mean()
+        
+            # Meranking fitur berdasarkan skor
+            ranked_features = impact_scores.sort_values(ascending=False)
+        
+            # Menyimpan hasil ranking untuk cluster ini
+            ranked_features_by_cluster[cluster] = ranked_features
+        
+            # Menampilkan hasil ranking fitur untuk cluster ini
+            st.write(f"Ranking Fitur Berdasarkan Pengaruh untuk Cluster {cluster}:")
+            st.write(ranked_features)
+            st.write("")
                 
     with Nilai_DBI:
         st.subheader("Nilai DBI")
