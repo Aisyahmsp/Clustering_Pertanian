@@ -17,7 +17,7 @@ st.markdown("""<h1 style='text-align: center;'> Pengelompokan Produktivitas Pert
 with st.sidebar:
     selected = option_menu(
         menu_title="Pilihan Menu", #required
-        options=["Beranda", "Deskripsi", "Dataset", "Preprocessing", "Clustering K-Means", "Clustering BSDK", "Referensi"], #required
+        options=["Beranda", "Deskripsi", "Dataset", "Preprocessing", "Clustering K-Means", "Clustering Binary Search Dynamic K-Means", "Referensi"], #required
         icons=["house-door-fill", "book-half", "bi bi-file-earmark-arrow-up-fill", "arrow-repeat","medium", "folder-fill", "bookmark-fill"], #optional
         menu_icon="cast", #optional
         default_index=0, #optional    
@@ -455,7 +455,7 @@ if selected == "Clustering K-Means":
         st.write(f"Nilai Silhouette Coefficient K-Means dengan nilai k = {num_clusters}:", silhouette_coefficient)
 
 
-if selected == "Clustering BSDK":
+if selected == "Clustering Binary Search Dynamic K-Means":
     data = pd.read_csv('https://raw.githubusercontent.com/Aisyahmsp/clustering_bsdk/main/dataset_produktivitas.csv')
     # MENGHAPUS FITUR YANG TIDAK RELEVAN
     # Tentukan daftar fitur yang ingin dihapus
